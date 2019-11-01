@@ -9,6 +9,7 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.slf4j.Logger;
@@ -213,6 +214,81 @@ public class HSSFWorkbookUtil {
         }
         return row;
     }
+    
+//private static Map<String, HSSFCellStyle> numericCellStyleMap = new HashMap<>(10);
+//    
+//    static {
+//    	 HSSFWorkbook workbook = new HSSFWorkbook();
+//    	 HSSFCellStyle style = workbook.createCellStyle();
+//         style.cloneStyleFrom(getStyle(workbook));
+//         
+//         //获取excel数字单元格格式化模板
+//         StringBuilder bld = new StringBuilder("0");
+//
+//         // 设置整数格式 返回单元格数字 "0"
+//         style.setDataFormat(HSSFDataFormat.getBuiltinFormat(bld.toString()));
+//         numericCellStyleMap.put(bld.toString() , style);
+//
+//         //小数位部分
+//         //有小数位，并且不全为0
+//         bld.append(".");
+//         for (int i = 0; i < 10; i++) {
+//        	 bld.append("0");
+//   		 style.setDataFormat(HSSFDataFormat.getBuiltinFormat(bld.toString()));
+//         numericCellStyleMap.put(bld.toString() , style);
+//         }
+//    }
+//    
+//    
+//    public static HSSFRow setTableCellStyleByCellType2(HSSFRow row, int n, HSSFWorkbook workbook) {
+//        HSSFCellStyle cellStyleForString = getStyle(workbook);
+//        for (int i = 0; i < n; i++) {
+//            HSSFCell cell = row.getCell(i);
+//            // 判断是否是数字类型
+//            if (HSSFCell.CELL_TYPE_NUMERIC == cell.getCellType()) {
+//                // 如果单元格内容是数值类型，涉及到金钱（金额、本、利），则设置cell的类型为数值型，设置data的类型为数值类型
+//                double numericCellValue = cell.getNumericCellValue();
+//                // 获取小数位对应的格式
+//                String format = getDecimalDigitsNum(numericCellValue);
+//                cell.setCellStyle(numericCellStyleMap.get(format));
+//                // 防止科学计数法
+//                cell.setCellValue(Double.parseDouble(BigDecimal.valueOf(numericCellValue).toPlainString()));
+//            } else {
+//                // 除了数字格式之外,其他的都默认为String,设为默认风格
+//                cell.setCellStyle(cellStyleForString);
+//            }
+//        }
+//        return row;
+//    }
+    
+	public static Map<String, HSSFCellStyle> getNumericCellStyleMap(HSSFWorkbook workbook) {
+		HSSFCellStyle styleForClone = getStyle(workbook);
+
+		Map<String, HSSFCellStyle> numericCellStyleMap = new HashMap<>(10);
+		// 获取excel数字单元格格式化模板
+		StringBuilder bld = new StringBuilder("0");
+
+		// 设置整数格式 返回单元格数字 "0"
+		HSSFCellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.cloneStyleFrom(styleForClone);
+		cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat(bld.toString()));
+		numericCellStyleMap.put(bld.toString(), cellStyle);
+
+		// 小数位部分
+		// 有小数位，并且不全为0
+		bld.append(".");
+		for (int i = 0; i < 10; i++) {
+			bld.append("0");
+			HSSFCellStyle cellStyle2 = workbook.createCellStyle();
+			cellStyle2.cloneStyleFrom(styleForClone);
+			cellStyle2.setDataFormat(HSSFDataFormat.getBuiltinFormat(bld.toString()));
+			numericCellStyleMap.put(bld.toString(), cellStyle2);
+		}
+		return numericCellStyleMap;
+	}
+    
+    
+    
     /**
      * 为数据行设置样式 根据不同的单元格数字类型
      * 
@@ -250,6 +326,27 @@ public class HSSFWorkbookUtil {
         }
         return row;
     }
+    
+	public static HSSFRow setTableCellStyleByCellType(HSSFRow row, int n, HSSFCellStyle style,
+			Map<String, HSSFCellStyle> numericCellStyleMap) {
+		for (int i = 0; i < n; i++) {
+			HSSFCell cell = row.getCell(i);
+			// 判断是否是数字类型
+			if (HSSFCell.CELL_TYPE_NUMERIC == cell.getCellType()) {
+				// 如果单元格内容是数值类型，涉及到金钱（金额、本、利），则设置cell的类型为数值型，设置data的类型为数值类型
+				double numericCellValue = cell.getNumericCellValue();
+				// 获取小数位对应的格式
+				cell.setCellStyle(numericCellStyleMap.get(getDecimalDigitsNum(numericCellValue)));
+				// 防止科学计数法
+				cell.setCellValue(Double.parseDouble(BigDecimal.valueOf(numericCellValue).toPlainString()));
+			} else {
+				// 除了数字格式之外,其他的都默认为String,设为默认风格
+				cell.setCellStyle(style);
+			}
+		}
+		return row;
+
+	}
     
     private static String getDecimalDigitsNum(double numericCellValue) {
        return getDecimalDigitsNum(numericCellValue + "");
@@ -312,5 +409,6 @@ public class HSSFWorkbookUtil {
 //        }
     }
 
-    
+
+	
 }

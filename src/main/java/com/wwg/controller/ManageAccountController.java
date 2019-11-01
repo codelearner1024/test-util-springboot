@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -117,7 +118,9 @@ public class ManageAccountController extends BaseController {
             sheet.setColumnWidth(i, 26 * 256);
         }
         HSSFCellStyle style = HSSFWorkbookUtil.getStyle(workbook);// 单元格样式对象
-
+        Map<String, HSSFCellStyle> numericCellStyleMap = HSSFWorkbookUtil.getNumericCellStyleMap(workbook);//数值格式Map
+        
+        
         int border = 1;
         // 设置标题
         CellRangeAddress cra = new CellRangeAddress(0, 0, 0, rowName.length - 1);
@@ -2683,9 +2686,9 @@ public class ManageAccountController extends BaseController {
                     .setCellValue("1".equals(mo.getString("status")) ? ManageAccountConstant.STATUS_OK : "");// 状态
 
 //                HSSFWorkbookUtil.setTableCellStyle(productRow, rowName.length, style);
-                HSSFWorkbookUtil.setTableCellStyleByCellType(productRow, rowName.length, workbook);
-//            }
-        }
+//                HSSFWorkbookUtil.setTableCellStyleByCellType(productRow, rowName.length, workbook);
+                HSSFWorkbookUtil.setTableCellStyleByCellType(productRow, rowName.length,style,numericCellStyleMap);
+            }
 
         InputStream is = null;
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
