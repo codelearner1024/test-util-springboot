@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.google.common.base.Charsets;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
-import com.wwg.util.MathUtil;
+import com.wwg.util.math.MathUtil;
 
 public class BloomFilterTest {
     private static final int insertions = 1000000; // 100w

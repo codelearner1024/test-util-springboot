@@ -1,4 +1,4 @@
-package com.wwg.util;
+package com.wwg.util.math;
 
 
 import java.math.BigDecimal;

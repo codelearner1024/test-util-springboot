@@ -1,4 +1,4 @@
-package com.wwg.util;
+package com.wwg.util.file;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

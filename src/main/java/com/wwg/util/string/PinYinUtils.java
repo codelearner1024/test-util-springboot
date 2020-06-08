@@ -1,4 +1,4 @@
-package com.wwg.pingyin;
+package com.wwg.util.string;
 
 import java.util.ArrayList;
 import java.util.HashSet;
