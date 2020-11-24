@@ -40,6 +40,7 @@ public class TestEasyExcel {
     public void simpleWrite() {
         // 写法1
         //创建文件名
+
         String fileName = PATH+ "easyexcel.xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 如果这里想使用03 则 传入excelType参数即可
